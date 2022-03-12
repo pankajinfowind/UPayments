@@ -11,10 +11,6 @@ const ProductDetailScreen = (props) => {
     const [product, setProduct] = useState()
 
     useEffect(() => {
-        console.log(
-            "props.route.params.data.isNotification",
-            props.route.params.id
-        );
         if (props?.route?.params?.id) {
             getCategories(props?.route?.params?.id)
         }
@@ -22,6 +18,10 @@ const ProductDetailScreen = (props) => {
     const getCategories = (id: string) => {
         ProductDetails(id).then(async response => {
             setLoading(false)
+            console.log(
+                "Product details is = ",
+                response.data
+            );
             if (response.data) {
                 setProduct(response.data)
             }
@@ -40,13 +40,13 @@ const ProductDetailScreen = (props) => {
             {product ?
                 <ScrollView style={{ flex: 1, backgroundColor: COLORS.black }}>
                     <View style={styles.imageViewStyle} >
-                        <Image style={{ width: '100%', height: 300 }} resizeMode='contain' source={{uri:product.avatar}} />
+                        <Image style={{ width: '100%', height: 300 }} resizeMode='contain' source={{ uri: product.avatar }} />
                     </View>
                     <View style={styles.blackView}>
                         <View style={{ flexDirection: 'row', marginLeft: 20, marginRight: 20, marginTop: 30 }}>
                             <Text style={styles.productNameTextStyle}>{product.name}</Text>
                             <View style={{ flex: 1 }}></View>
-                            <Text style={{ color: COLORS.white, justifyContent: 'flex-end',fontWeight:'bold' }}>${product.price}</Text>
+                            <Text style={{ color: COLORS.white, justifyContent: 'flex-end', fontWeight: 'bold' }}>${product.price}</Text>
                         </View>
                         <View style={styles.productDisTextStyle}>
                             <Text style={{ color: COLORS.white }}>
@@ -71,7 +71,12 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 20,
         borderTopLeftRadius: 20,
         backgroundColor: 'black',
-        top: -20
+        top: -20,
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: -10 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 5,
     },
     productDisTextStyle: {
         flex: 1,

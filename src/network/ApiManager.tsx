@@ -38,3 +38,12 @@ export const CategoryList = async (
         return error
     })
 }
+export const AddNewProduct = async (
+    product:any
+) => {
+    return await axios.post(BASE_URL.concat(Product_EndPoint), product).then((response: any) => {
+        return response
+    }).catch((error: any) => {
+        return error
+    })
+}

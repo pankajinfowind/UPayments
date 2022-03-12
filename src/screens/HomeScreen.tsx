@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Image, Text, View, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, Dimensions } from 'react-native';
+import { Image, Text, View, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator, Dimensions, DeviceEventEmitter } from 'react-native';
 import { HEADER_TITLE } from '../utils/Constants'
 import { ProductList, CategoryList } from '../network/ApiManager'
 const windowWidth = Dimensions.get('window').width;
@@ -20,8 +20,12 @@ const HomeScreen = ({ navigation }) => {
     useEffect(() => {
         getCategories()
     }, []);
-
+    const addNewProduct = () => {
+        setFiler("0")
+        getProducts()
+    }
     const getCategories = () => {
+        DeviceEventEmitter.addListener('ProductAdded', () => addNewProduct())
         CategoryList().then(async response => {
             if (Array.isArray(response.data)) {
                 let cats = response.data
@@ -48,16 +52,16 @@ const HomeScreen = ({ navigation }) => {
         })
     }
     const applyFilter = (category: string, id: string) => {
-        if (id == filter) { return }
+        // if (id == filter) { return }
         setFiler(id)
-        console.log("params is = ",category,id)
+        console.log("params is = ", category, id)
         if (id == "0") {
             setFilterProducts(products)
         } else {
             let filterArray = products.filter((item) => item.category == category)
             setFilterProducts(filterArray)
         }
-        
+
     }
     const categoryList = () => {
         return (
@@ -72,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
                         return (
                             <>
                                 <TouchableOpacity style={filter == item.id.toString() ? styles.categoryBtn_active : styles.categoryBtn_inActive}
-                                    onPress={() => applyFilter(item.name,item.id.toString())}
+                                    onPress={() => applyFilter(item.name, item.id.toString())}
                                 >
                                     <Text style={filter == item.id.toString() ? styles.catBtnTextStyle_active : styles.catBtnTextStyle_inActive}>{item.name}</Text>
                                 </TouchableOpacity>
@@ -94,7 +98,7 @@ const HomeScreen = ({ navigation }) => {
                     return (
                         <>
                             <TouchableOpacity style={styles.productListStyle}
-                                onPress={() => navigation.navigate('ProductDetail',{id:item.id})}
+                                onPress={() => navigation.navigate('ProductDetail', { id: item.id })}
                             >
                                 <Image style={{ top: 16, height: 120, width: '80%' }}
                                     resizeMode='contain'
@@ -113,12 +117,12 @@ const HomeScreen = ({ navigation }) => {
                 keyExtractor={(item, index) => index.toString()}
             ></FlatList>)
     }
-    const addProductButton = ()=>{
-        return(
+    const addProductButton = () => {
+        return (
             <TouchableOpacity style={styles.addProductBtn}
-            onPress={()=>navigation.navigate('AddProduct')}
+                onPress={() => navigation.navigate('AddProduct')}
             >
-                <Text style={{fontSize:30,fontWeight:'bold'}}>+</Text>
+                <Text style={{ fontSize: 30, fontWeight: 'bold' }}>+</Text>
             </TouchableOpacity>
         )
     }
@@ -198,7 +202,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 10,
         marginTop: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 8,
+        shadowRadius: 4,
+        elevation: 5,
     },
     prodListBlackStyle: {
         width: '100%',
@@ -215,7 +224,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     productTitle: { margin: 6, color: 'white', fontWeight: 'bold' },
-    addProductBtn:{alignSelf:'flex-end',right:20,bottom:50,marginRight:20,position:'absolute',borderRadius:30,justifyContent:'center',alignItems:'center',width:50,height:50,borderWidth:2,backgroundColor:'white'}
+    addProductBtn: { alignSelf: 'flex-end', right: 20, bottom: 50, marginRight: 20, position: 'absolute', borderRadius: 30, justifyContent: 'center', alignItems: 'center', width: 50, height: 50, borderWidth: 2, backgroundColor: 'white' }
 })
 
 export default HomeScreen;
